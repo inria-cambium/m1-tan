@@ -1,8 +1,8 @@
--Q theories MetaCoq.Guarded
+-Q theories MetaRocq.Guarded
 
-COQDOCFLAGS = "--charset utf-8 -s --index indexpage"
+ROCQDOCFLAGS = "--charset utf-8 -s --index indexpage"
 
-theories/MCRTree.v
+theories/MRRTree.v
 theories/Except.v
 theories/Trace.v
 theories/util.v

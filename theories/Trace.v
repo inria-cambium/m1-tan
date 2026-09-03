@@ -1,8 +1,8 @@
-From MetaCoq.Utils Require Import MCUtils bytestring.
-From MetaCoq.Guarded Require Import Except util.
-Require Import List.
+From MetaRocq.Utils Require Import MRUtils bytestring.
+From MetaRocq.Guarded Require Import Except util.
+From Stdlib Require Import List.
 
-Require Import BinNat.
+From Stdlib Require Import BinNat.
 
 Definition TIMEOUT_TIME := 3000%N.
 Definition TIMEOUT := false.

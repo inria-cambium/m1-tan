@@ -1,8 +1,8 @@
-From MetaCoq.Utils Require Import utils MCMSets.
-From MetaCoq.Common Require Import BasicAst Universes Environment Reflect.
-From MetaCoq.Template Require Import Ast AstUtils LiftSubst Pretty Checker.
+From MetaRocq.Utils Require Import utils MRMSets.
+From MetaRocq.Common Require Import BasicAst Universes Environment Reflect.
+From MetaRocq.Template Require Import Ast AstUtils LiftSubst Pretty Checker.
 
-From MetaCoq.Guarded Require Import MCRTree Inductives.
+From MetaRocq.Guarded Require Import MRRTree Inductives.
 
 (* Uncomment to use printing effect. *)
 (* From ReductionEffect Require Import PrintingEffect. *)
@@ -338,7 +338,7 @@ Definition push_fix_guard_env G (mfix : mfixpoint term) :=
 *)
 (**
   Lacking restrictions to the information allowed to pass through matches in this way were cause for a soundness bug in 2013.
-  See https://sympa.inria.fr/sympa/arc/coq-club/2013-12/msg00119.html.
+  See https://sympa.inria.fr/sympa/arc/rocq-club/2013-12/msg00119.html.
 *)
 
 Inductive fix_check_result :=
@@ -532,7 +532,7 @@ Definition ienv_push_inductive Σ '(Γ, ra_env) ind (pars : list term) : exc ien
     *)
   let ra_env_push_inner_inductives_with_params ntypes : list (recarg × wf_paths) := 
     (** make inner inductive types (Imbr in the tree) with recursive references for the individual types *)
-    let rc := MCList.rev $ mapi (fun i t => (Mrec (RecArgInd (mkInd ind.(inductive_mind) i)), t)) 
+    let rc := MRList.rev $ mapi (fun i t => (Mrec (RecArgInd (mkInd ind.(inductive_mind) i)), t)) 
                         (mk_rec_calls (X := recarg) ntypes) in
     (** lift the existing ra_env *)
     let ra_env' := map (fun '(r, t) => (r, rtree_lift ntypes t)) ra_env in
@@ -602,7 +602,7 @@ Fixpoint build_recargs_nested Σ ρ ienv (tree : wf_paths) (ind: inductive) (arg
   let num_unif_params := num_uniform_params mib in (* Counterpart: [auxnpar] *)
   let num_non_unif_params := mib.(ind_npars) - num_unif_params in (* Counterpart: [nonrecpar] *)
   (** get the instantiations for the uniform parameters *)
-  (** Note that in Coq, all parameters after the first non-uniform parameter are treated as non-uniform -- thus we can just take a prefix of the list *)
+  (** Note that in Rocq, all parameters after the first non-uniform parameter are treated as non-uniform -- thus we can just take a prefix of the list *)
   let inst_unif := firstn num_unif_params args in (* Counterpart: [lpar] *)
   let num_mut_inds := length mib.(ind_bodies) in (* Counterpart: [auxntyp] *)
   (** extend the environment with the inductive definitions applied to the parameters *)
@@ -758,7 +758,7 @@ with build_recargs_constructors Σ ρ ienv (trees : list wf_paths) (c : term) {s
         recargs_constr_rec (Γ',ra_env') rest_trees (rec_tree :: lrec) body
     | _ => 
         (* we have processed all the arguments of the constructor -- reverse to get a valid dB-indexed context *)
-        ret $ MCList.rev lrec  
+        ret $ MRList.rev lrec  
     end
   in recargs_constr_rec (Γ,ra_env) trees [] c. 
 
@@ -1227,7 +1227,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
           z_tree <- stack_element_specif Σ ρ z;;
           trace $ "  result: "^print_subterm_spec Σ z_tree ;;
           trace "checking if arg is a strict subterm via rtree_incl" ;;
-          result <- check_is_subterm z_tree recarg_tree;;
+          let result := check_is_subterm z_tree recarg_tree in
           trace $ "  result: "^print_check_subterm_result result ;;
           let guard_err : fix_guard_error := illegal_rec_call G decreasing_arg z in
           match result with
@@ -1326,7 +1326,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
         | tSort _ | tInt _ | tFloat _ | tArray _ _ _ _ =>
             raise $ OtherErr "check_rec_call_stack :: tCase" "malformed term"
         | tRel _ | tVar _ | tConst _ _ | tApp _ _ | tCase _ _ _ _ | tFix _ _
-        | tProj _ _ | tCast _ _ _ | tEvar _ _ =>
+        | tProj _ _ | tCast _ _ _ | tEvar _ _ | tString _ =>
             raise NoReductionPossible
         end) ;;
         trace "done checking case" ;;
@@ -1399,7 +1399,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
           | tSort _ | tInt _ | tFloat _ | tArray _ _ _ _ =>
               raise $ OtherErr "check_rec_call_stack :: tCase" "malformed term"
           | tRel _ | tVar _ | tConst _ _ | tApp _ _ | tCase _ _ _ _ | tFix _ _
-          | tProj _ _ | tCast _ _ _ | tEvar _ _ =>
+          | tProj _ _ | tCast _ _ _ | tEvar _ _ | tString _ =>
               raise NoReductionPossible
           end
         end)
@@ -1429,9 +1429,9 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
       check_rec_call_stack (push_var_guard_env G (redex_level rs) x ty) [] rs' body
 
   | tCoFix mfix_inner fix_ind => 
-      let rs := fold_left
+      rs <- fold_left
         (fun rs t => rs <- rs ;; check_inert_subterm_rec_call G rs t)
-        (map dtype mfix_inner) (ret rs) in
+        (map dtype mfix_inner) (ret rs) ;;
       let G' := push_fix_guard_env G mfix_inner in
       fold_left (fun rs body =>
           rs <- rs ;;
@@ -1462,7 +1462,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
             arg <- except (IndexErr "check_rec_call_stack" "index out of range" i) $ nth_error args i ;;
             ret (arg, [])
         | tCoFix _ _ | tInd _ _ | tLambda _ _ _ | tProd _ _ _ | tLetIn _ _ _ _
-        | tSort _ | tInt _ | tFloat _ | tArray _ _ _ _ =>
+        | tSort _ | tInt _ | tFloat _ | tArray _ _ _ _ | tString _ =>
             raise $ OtherErr "check_rec_call_stack :: tCase" "malformed term"
         | tRel _ | tVar _ | tConst _ _ | tApp _ _ | tCase _ _ _ _ | tFix _ _
         | tProj _ _ | tCast _ _ _ | tEvar _ _ =>
@@ -1470,7 +1470,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
         end)
 
   | tVar _ => ret rs
-  (* FIXME: do vars work in MC? *)
+  (* FIXME: do vars work in MR? *)
   (* | tVar id => 
       check_rec_call_state G NoNeedReduce stack rs (fun tt =>
         entry <- except (OtherErr "check_rec_call_stack" "unknown variable") $
@@ -1496,7 +1496,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
       rs <- check_inert_subterm_rec_call G rs t ;;
       check_rec_call_stack G stack rs c
 
-  | tSort _ | tInt _ | tFloat _ | tArray _ _ _ _ => ret rs
+  | tSort _ | tInt _ | tFloat _ | tArray _ _ _ _ | tString _ => ret rs
 
   | tEvar _ _ => ret rs
   end

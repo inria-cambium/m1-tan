@@ -1,7 +1,7 @@
 (* Utility functions that are term/ast-oblivious.
   term/ast-related utils go to Inductive.v. *)
-From MetaCoq.Utils Require Import utils.
-From MetaCoq.Guarded Require Import Except.
+From MetaRocq.Utils Require Import utils.
+From MetaRocq.Guarded Require Import Except.
 
 Definition map2_i {A B C} (f : nat -> A -> B -> C) (a : list A) (b : list B) := 
   let map2' := fix rec a b n := 
@@ -120,4 +120,4 @@ Definition map_i {A B} (f : nat -> A -> B) (l : list A) : list B :=
 Definition fold_left2_i {A X Y} (f : nat -> A -> X -> Y -> A) xs ys a :=
   fold_left_i (fun j a '(x, y) => f j a x y) (map2 pair xs ys) a.
 
-Notation "f '$' a" := (f (a)) (at level 99, only parsing).
+Notation "f '$' a" := (f (a)) (at level 60, right associativity, only parsing).

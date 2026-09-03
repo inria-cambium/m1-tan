@@ -1,3 +1,3 @@
 all:
-	ocamlfind ocamlopt -c -thread -package coq-core.kernel res.mli
-	ocamlfind ocamlopt -o run -thread -package coq-core.kernel coqrun.cmxa clib.cmxa kernel.cmxa res.ml
+	ocamlfind ocamlopt -c -thread -package rocq-core.kernel res.mli
+	ocamlfind ocamlopt -o run -thread -package rocq-core.kernel rocqrun.cmxa clib.cmxa kernel.cmxa res.ml

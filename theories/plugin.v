@@ -1,11 +1,11 @@
-From MetaCoq.Common Require Import Environment.
-From MetaCoq.Template Require Import Ast AstUtils All.
+From MetaRocq.Common Require Import Environment.
+From MetaRocq.Template Require Import Ast AstUtils All.
 Open Scope string_scope.
-Require Import List String.
+From Stdlib Require Import List String.
 Import ListNotations.
 Open Scope string_scope.
-From MetaCoq.Utils Require Import MCList.
-From MetaCoq.Guarded Require Import MCRTree Inductives guardchecker positivitychecker Except Trace.
+From MetaRocq.Utils Require Import MRList.
+From MetaRocq.Guarded Require Import MRRTree Inductives guardchecker positivitychecker Except Trace.
 
 (* explicit instantiation with TemplateMonad as a definition parametric over the monad causes trouble with universe polymorphism *)
 Definition list_iter {X} (f : X -> TemplateMonad unit) (l : list X) : TemplateMonad unit := 
@@ -46,7 +46,7 @@ Definition check_inductive_mib (Σ:global_env_ext) (kn : kername) (mib : mutual_
 
 (** Positivity checker *)
 Definition check_inductive {A} (def : option ident) (a : A) : TemplateMonad unit := 
-  mlet '(Σ', t) <- tmQuoteRec a;;
+  '(Σ', t) <- tmQuoteRec a;;
   let Σ := (Σ', Monomorphic_ctx) in
   match t with
   | tInd ind _ => 
@@ -77,7 +77,7 @@ Definition check_inductive {A} (def : option ident) (a : A) : TemplateMonad unit
   end.
 
 (** Compute paths_env *)
-(** Since the MC inductives representation does not include wf_paths, we first compute them via the positivity checker. The trees are carried around in an additional paths_env. *)
+(** Since the MR inductives representation does not include wf_paths, we first compute them via the positivity checker. The trees are carried around in an additional paths_env. *)
 Fixpoint compute_paths_env Σ0 Σ : TemplateMonad (list (kername * (list wf_paths))):= 
   match Σ with
   | [] => ret []
@@ -115,12 +115,12 @@ Fixpoint check_fix_term (Σ : global_env) ρ (Γ : context) (t : term) {struct t
       | (_, trace, inr e) => (* not guarded *)
           trace <- tmEval lazy trace;;
           e <- tmEval lazy e;;
-          _ <- monad_iter tmPrint (MCList.rev trace) ;;
+          _ <- monad_iter tmPrint (MRList.rev trace) ;;
           tmPrint e ;;
           tmReturn false
       | (_, trace, inl tt) => (* guarded *)
           trace <- tmEval lazy trace;;
-          _ <- monad_iter tmPrint (MCList.rev trace) ;;
+          _ <- monad_iter tmPrint (MRList.rev trace) ;;
           tmPrint "success" ;;
           tmReturn true
       end

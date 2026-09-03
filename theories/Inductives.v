@@ -1,11 +1,11 @@
-From MetaCoq.Template Require Import Checker. 
-From MetaCoq.Utils Require Import utils.
-From MetaCoq.Common Require Import BasicAst Universes Environment Reflect.
-From MetaCoq.Template Require Import Ast AstUtils.
-From MetaCoq.Template Require Import LiftSubst Pretty.
-From MetaCoq.Guarded Require Import MCRTree. 
+From MetaRocq.Template Require Import Checker. 
+From MetaRocq.Utils Require Import utils.
+From MetaRocq.Common Require Import BasicAst Universes Environment Reflect.
+From MetaRocq.Template Require Import Ast AstUtils.
+From MetaRocq.Template Require Import LiftSubst Pretty.
+From MetaRocq.Guarded Require Import MRRTree. 
 
-From MetaCoq.Guarded Require Export util.
+From MetaRocq.Guarded Require Export util.
 
 (** * Common preliminaries of the positivity and guard checkers *)
 
@@ -17,8 +17,8 @@ Open Scope exc_scope.
 Notation loc := string (only parsing).
 
 (** ** Trace-monad based *)
-From MetaCoq.Guarded Require Export Trace. 
-Export MCMonadNotation.
+From MetaRocq.Guarded Require Export Trace. 
+Export MonadNotation.
 
 (** TODO YJ: what do the parameters mean? *)
 Inductive fix_guard_error :=
@@ -98,7 +98,7 @@ Definition constr_result_num_uniform (ctx : context) (num_pars : nat) (app : lis
 
 Definition mind_specif := mutual_inductive_body * one_inductive_body.
 
-(* In Coq kernel speak, an arity is the type of an inductive without the parameters (i.e. what comes after the colon when writing down the inductive) *)
+(* In Rocq kernel speak, an arity is the type of an inductive without the parameters (i.e. what comes after the colon when writing down the inductive) *)
 Record inductive_arity := {
     ind_user_arity : term; (* the full arity *)
     ind_sort : sort        (* just the sort *)
@@ -143,7 +143,7 @@ Definition decompose_arity (t : term) (nparams : nat) : context * inductive_arit
   apply (List.firstn nparams) in names.
   apply (List.firstn nparams) in types.
   split.
-  refine (MCList.rev (map (fun '(x, ty) => vass x ty) (combine names types))). 
+  refine (MRList.rev (map (fun '(x, ty) => vass x ty) (combine names types))). 
   constructor.
   exact ar. exact (ind_get_sort ar). 
 Defined.
@@ -192,10 +192,10 @@ Definition one_inductive_num_uniform (i : mind_specif) :=
 
 
 (** Computes the number of uniform parameters of the mutual inductive definition [i]. 
-  Note: In Coq, for an inductive declaration 
+  Note: In Rocq, for an inductive declaration 
     Inductive I X1 ... Xn : U := ...
   if Xi is non-uniform, then also Xj for j >= i are treated as non-uniform.
-  That is, from the number of uniform parameters we can restore which parameters are uniform (from Coq's perspective). 
+  That is, from the number of uniform parameters we can restore which parameters are uniform (from Rocq's perspective). 
 *)
 Definition num_uniform_params (mib : mutual_inductive_body) : nat := 
   List.fold_left (fun acc oib => min acc (one_inductive_num_uniform (mib, oib))) mib.(ind_bodies) mib.(ind_npars). 
@@ -230,7 +230,7 @@ Definition lookup_env_const Σ kn : option constant_body :=
   | _ => None
   end.
 
-(* NOTE: this does not accurately model the intended behaviour as MetaCoq ignores opaqueness *)
+(* NOTE: this does not accurately model the intended behaviour as MetaRocq ignores opaqueness *)
 (* Counterpart: [evaluable_constant] *)
 Definition is_evaluable_const Σ kn := 
   match lookup_env_const Σ kn with
@@ -261,7 +261,7 @@ Definition lookup_mib Σ kn : exc mutual_inductive_body :=
 Definition lookup_mind_specif Σ (ind : inductive) : exc mind_specif := 
   mib <- lookup_mib Σ ind.(inductive_mind) ;;
   ib <- except (IndexErr "lookup_mind_specif" "invalid inductive index" ind.(inductive_ind)) $ 
-    nth_error mib.(ind_bodies) ind.(inductive_ind);;
+    nth_error mib.(ind_bodies) ind.(inductive_ind) ;;
   ret (mib, ib).
 
 
@@ -413,7 +413,7 @@ Definition fold_term_with_binders {A B : Type} (g : A -> A)
   (f : A -> B -> term -> B) (n : A) (acc : B) (c : term) :=
   match c with
   | (tRel _ | tVar _   | tSort _ | tConst _ _ | tInd _ _
-    | tConstruct _ _ _ | tInt _ | tFloat _) => acc
+    | tConstruct _ _ _ | tInt _ | tFloat _ | tString _) => acc
   | tCast c _ t => f n (f n acc c) t
   | tProd _na t c => f (g n) (f n acc t) c
   | tLambda  _na t c => f (g n) (f n acc t) c
@@ -442,8 +442,8 @@ Definition fold_term_with_binders {A B : Type} (g : A -> A)
     f n (f n (fold_left (f n) t acc) def) ty
   end.
 
-(* Since the "return predicate" in Coq kernel is of type [list aname * term * wf_path],
-  while MetaCoq does not keep track of [wf_path],
+(* Since the "return predicate" in Rocq kernel is of type [list aname * term * wf_path],
+  while MetaRocq does not keep track of [wf_path],
   the [map_return_predicate] here corresponds to [map_under_context_with_binders], its subfunction.
   
   Furthermore, since the first projection [list aname] is only used for its length,
@@ -514,7 +514,7 @@ Definition map_with_binders {A B : Type} (g : A -> A)
   (f : A -> term -> term) (l : A) (c0 : term) : term :=
   match c0 with
   | (tRel _ | tVar _   | tSort _ | tConst _ _ | tInd _ _
-    | tConstruct _ _ _ | tInt _ | tFloat _ ) => c0
+    | tConstruct _ _ _ | tInt _ | tFloat _ | tString _) => c0
 
   | tCast c k t =>
     let c' := f l c in
@@ -668,7 +668,7 @@ Proof.
 Defined.
 
 (** wf_paths env *)
-(** Since the MC representation of inductives does not include wf_paths, we infer them using the positivity checker and keep an additional paths_env. *)
+(** Since the MR representation of inductives does not include wf_paths, we infer them using the positivity checker and keep an additional paths_env. *)
 Definition pathsEnv := list (kername * list wf_paths).
 Implicit Type (ρ : pathsEnv).
 
@@ -790,7 +790,7 @@ Definition subst_of_rel_context_instance_list sign l :=
     | [], [] => ret subst
     | _, _ => raise (OtherErr "subst_of_rel_context_instance_list" "Instance and signature do not match.")
     end
-  in aux [] (MCList.rev sign) l.
+  in aux [] (MRList.rev sign) l.
 
 Definition apply_branch Σ Γ (ind:inductive) (idx:nat) (args:list term) (ci:case_info) (branches:list term) : exc term :=
   let args := List.skipn ci.(ci_npar) args in
@@ -799,7 +799,7 @@ Definition apply_branch Σ Γ (ind:inductive) (idx:nat) (args:list term) (ci:cas
   mip <- except (IndexErr "apply_branch" "invalid inductive" idx) $ nth_error mib.(ind_bodies) ind.(inductive_ind) ;;
   cstr_body <- except (IndexErr "apply_branch" "invalid constructor" idx) $ nth_error mip.(ind_ctors) idx ;;
   let ci_cstr_ndecls := #|cstr_body.(cstr_args)| in
-  '(ctx, br') <- decompose_lam_n_assum Σ [] ci_cstr_ndecls br ;; (* TODO YF: double check we need Γ or [] here. I changed it to [], but this is pretty different from Coq code in inductive.ml *)
+  '(ctx, br') <- decompose_lam_n_assum Σ [] ci_cstr_ndecls br ;; (* TODO YF: double check we need Γ or [] here. I changed it to [], but this is pretty different from Rocq code in inductive.ml *)
   subst <- subst_of_rel_context_instance_list ctx args ;; 
   ret $ subst0 subst br'.
 

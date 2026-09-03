@@ -1,11 +1,11 @@
-From MetaCoq.Template Require Import Checker. 
-From MetaCoq.Utils Require Import utils.
-From MetaCoq.Common Require Import BasicAst Universes Environment Reflect.
-From MetaCoq.Template Require Import Ast AstUtils.
-From MetaCoq.Template Require Import LiftSubst Pretty.
-From MetaCoq.Guarded Require Import MCRTree. 
+From MetaRocq.Template Require Import Checker. 
+From MetaRocq.Utils Require Import utils.
+From MetaRocq.Common Require Import BasicAst Universes Environment Reflect.
+From MetaRocq.Template Require Import Ast AstUtils.
+From MetaRocq.Template Require Import LiftSubst Pretty.
+From MetaRocq.Guarded Require Import MRRTree. 
 
-From MetaCoq.Guarded Require Import Except util Trace Inductives.
+From MetaRocq.Guarded Require Import Except util Trace Inductives.
 
 (* non-recursive arguments = indices
   non-uniform = non-uniform 
@@ -124,7 +124,7 @@ Section checker.
           args_whd <- unwrap $ map (whd_all Σ Γ) args;;
           if checkpos && existsb (rel_range_occurs first_ind ntypes) args_whd 
           then 
-            (** the case where one of the inductives of the mutually inductive block occurs as an argument of another is not known to be safe, so Coq rejects it. *)
+            (** the case where one of the inductives of the mutually inductive block occurs as an argument of another is not known to be safe, so Rocq rejects it. *)
             raise $ PositivityError "check_positivity" "tRel case: non-strictly positive occurrence"
           else 
             (** just return the tree we have in the env *)
@@ -225,7 +225,7 @@ Section checker.
           (* if we check positivity, then there should be no recursive occurrence in the args *)
           assert (negb (checkpos) || (forallb (fun arg => negb (rel_range_occurs first_ind ntypes arg)) args)) (OtherErr "check_constructor" "");;
           (* we have processed all the arguments of the constructor -- reverse to get a valid dB-indexed context *)
-          ret $ MCList.rev lrec  
+          ret $ MRList.rev lrec  
       end
   in check_constructor_rec ienv [] c. 
 
@@ -268,7 +268,7 @@ Section checker.
     let rc := mapi (fun j t => (Mrec (RecArgInd (mkInd kn j)), t)) (mk_rec_calls ntypes) in 
     (* build the initial ra_env - we have to reverse due to dB 
       this contains the entries for recursive uses of the inductives of this block*)
-    let ra_env := MCList.rev rc in
+    let ra_env := MRList.rev rc in
     let nparams := length param_context in 
     let check_one_body i cons_names cons_types := 
       (* add parameters to ra_env as non-recursive *)

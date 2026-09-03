@@ -1,23 +1,23 @@
-all: coq # plugin
+all: rocq # plugin
 
-coq: Makefile.coq
-	$(MAKE) -f Makefile.coq
+rocq: Makefile.rocq
+	$(MAKE) -f Makefile.rocq
 
-Makefile.coq: _CoqProject
-	coq_makefile -f _CoqProject -o Makefile.coq
+Makefile.rocq: _RocqProject
+	rocq makefile -f _RocqProject -o Makefile.rocq
 
-install: coq # plugin
-	$(MAKE) -f Makefile.coq install
+install: rocq # plugin
+	$(MAKE) -f Makefile.rocq install
 	# $(MAKE) -f Makefile.plugin install
 
-doc : Makefile.coq
-	$(MAKE) -f Makefile.coq html
+doc : Makefile.rocq
+	$(MAKE) -f Makefile.rocq html
 
-uninstall: coq # plugin
-	$(MAKE) -f Makefile.coq uninstall
+uninstall: rocq # plugin
+	$(MAKE) -f Makefile.rocq uninstall
 	# $(MAKE) -f Makefile.plugin uninstall
 
 .PHONY: plugin
 
-clean: Makefile.coq
-	$(MAKE) -f Makefile.coq clean
+clean: Makefile.rocq
+	$(MAKE) -f Makefile.rocq clean

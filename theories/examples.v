@@ -1,15 +1,15 @@
-Require Import MetaCoq.Guarded.plugin. 
+From MetaRocq.Guarded Require Import plugin. 
 
-Require Import List.
+From Stdlib Require Import List.
 Import ListNotations.
 
 (* for printing of rtrees *)
-From MetaCoq Require Import Common.BasicAst Utils.bytestring.
-From MetaCoq.Guarded Require Import MCRTree Inductives.
+From MetaRocq Require Import Common.BasicAst Utils.bytestring.
+From MetaRocq.Guarded Require Import MRRTree Inductives.
 
 #[bypass_check(guard)]
 Fixpoint boom (x: nat) : False := boom (id (pred x + O)).
-MetaCoq Run (check_fix_ci false boom).
+MetaRocq Run (check_fix_ci false boom).
 
 Print Nat.sub.
 Fixpoint div (n m : nat) := 
@@ -22,12 +22,12 @@ Compute (div 6 2).
 (** spent a lot of time debugging, but proper debugging is effectively impossible due to slowness *)
 (** might also be because I uncommented some reduction stuff because of slowness? who knows *)
 
-(* MetaCoq Run (check_fix_ci true div).  *)
+(* MetaRocq Run (check_fix_ci true div).  *)
  
 (** * Some examples + explanations *)
 (** The guardedness checker works by recursively traversing terms and checking recursive guardedness syntactically.
   The main data structure it works off are regular trees/recursive trees.
-  These are computed for every inductive type by the Coq kernel's positivity checker. 
+  These are computed for every inductive type by the Rocq kernel's positivity checker. 
   Essentially, they capture the recursive structure of inductive types. 
   (more precisely, they describe all "well-founded paths", i.e. all paths of how
   an inhabitant of the inductive type can be constructed -- the positivity checker
@@ -35,10 +35,10 @@ Compute (div 6 2).
 *)
 
 (** Example : lists *)
-MetaCoq Run (check_inductive (Some "list_tree") list). 
+MetaRocq Run (check_inductive (Some "list_tree") list). 
 
-MetaCoq Run (check_inductive (Some "vec_tree") Vector.t). 
-MetaCoq Run (check_inductive (Some "fin_tree") Fin.t). 
+MetaRocq Run (check_inductive (Some "vec_tree") Vector.t). 
+MetaRocq Run (check_inductive (Some "fin_tree") Fin.t). 
 (** 
 
 Inductive list (X : Type) :=
@@ -85,16 +85,16 @@ of mutual inductives. *)
 (* clearly not strictly positive *)
 #[bypass_check(positivity)]
 Inductive bad1 : Set := bad1C : (bad1 -> bad1) -> bad1.
-MetaCoq Run (check_inductive (Some "bad1_tree") bad1).
+MetaRocq Run (check_inductive (Some "bad1_tree") bad1).
 Fixpoint f (b : bad1) : False := match b with | bad1C fbad => f (fbad b) end.
-MetaCoq Run (check_fix f).
+MetaRocq Run (check_fix f).
 
 (* test mutual *)
 (* Unset Positivity Checking. *)
 Inductive A : Set := A1 : B -> B -> A
 with B : Set := B1 : A -> B
 with C : Set := C1 : C -> C.
-MetaCoq Run (check_inductive (Some "B_tree") B).
+MetaRocq Run (check_inductive (Some "B_tree") B).
 (* Print B_tree. *)
 
 (** Nested inductives need special attention: to correctly handle matches (and subterms) on elements of a nested inductive type we are doing recursion over, the inner inductive type's parameters need to be properly instantiated with the outer inductive type. This is in particular the case for the recursive arguments tree. *)
@@ -142,7 +142,7 @@ MetaCoq Run (check_inductive (Some "B_tree") B).
   >>
     
 *)
-MetaCoq Run (check_inductive (Some "rtree_tree") rtree). 
+MetaRocq Run (check_inductive (Some "rtree_tree") rtree). 
 (* Print rtree_tree.  *)
 
 
@@ -164,14 +164,14 @@ Fixpoint abc_bad (n : nat) :=
   | 0 => 0
   | S n => abc_bad (match n with | 0 => n | S n => S n end)
   end.
-MetaCoq Run (check_fix_ci false abc_bad). 
+MetaRocq Run (check_fix_ci false abc_bad). 
 
 Fixpoint abc (n : nat) := 
   match n with 
   | 0 => 0
   | S n => abc (match n with | 0 => n | S n' => n end)
   end.
-MetaCoq Run (check_fix_ci true abc). 
+MetaRocq Run (check_fix_ci true abc). 
 
 (** - If matches are applied to some arguments, we "virtually" apply those arguments to the branches (technically, the checker maintains a stack of such virtual arguments). 
     
@@ -186,7 +186,7 @@ MetaCoq Run (check_fix_ci true abc).
 #[bypass_check(guard)]
 Fixpoint haha_this_is_ridiculous (n : nat) :=
   let _ := haha_this_is_ridiculous n in 0. 
-MetaCoq Run (check_fix_ci false haha_this_is_ridiculous). 
+MetaRocq Run (check_fix_ci false haha_this_is_ridiculous). 
 
 (** For more details, we refer to the comments in the implementation. *)
 
@@ -201,9 +201,9 @@ Definition broken_app  {A : Type} := fix broken_app (l m : list A) {struct l} :=
   | a :: l' => broken_app l m
   end.
 
-(*MetaCoq Run (check_fix broken_app ). *)
+(*MetaRocq Run (check_fix broken_app ). *)
 (* NOTE: as we only unfold constants at the very top, we need to remove maximally inserted implicits (as the lead to an implicit app, thus preventing broken_app from being unfolded*)
-MetaCoq Run (check_fix_ci false (@broken_app)). 
+MetaRocq Run (check_fix_ci false (@broken_app)). 
 
 
 Fixpoint weird_length {X} (l :list X) {struct l} := 
@@ -215,11 +215,11 @@ Fixpoint weird_length {X} (l :list X) {struct l} :=
       | cons y l'' => S (S (weird_length l''))
       end
   end.
-MetaCoq Run (check_fix_ci true (@weird_length)). 
+MetaRocq Run (check_fix_ci true (@weird_length)). 
 
-MetaCoq Run (check_fix_ci true app). 
-MetaCoq Run (check_fix_ci true rev).
-MetaCoq Run (check_fix_ci true (@Nat.div)).
+MetaRocq Run (check_fix_ci true app). 
+MetaRocq Run (check_fix_ci true rev).
+MetaRocq Run (check_fix_ci true (@Nat.div)).
 
 
 
@@ -243,14 +243,14 @@ with count_cons_odd n (o : odd n) : nat :=
   | oddS n e => 1 + count_cons_even n e
   end.
 
-(* MetaCoq Run (check_fix_ci true count_cons_odd).  *)
-(* MetaCoq Run (check_fix_ci true count_cons_even).  *)
+(* MetaRocq Run (check_fix_ci true count_cons_odd).  *)
+(* MetaRocq Run (check_fix_ci true count_cons_even).  *)
 
 
 
 (** Rosetrees *)
 Definition sumn (l : list nat) := List.fold_left (fun a b => a + b) l 0. 
-MetaCoq Run (check_fix_ci true sumn). 
+MetaRocq Run (check_fix_ci true sumn). 
  
 Fixpoint rtree_size {X} (t : rtree X) := 
   match t with
@@ -259,8 +259,8 @@ Fixpoint rtree_size {X} (t : rtree X) :=
                                                          | a :: t => rtree_size a :: map t
                                                                       end) l)
   end.
-MetaCoq Run (check_inductive None rtree). 
-(* MetaCoq Run (check_fix_ci true (@rtree_size)). *)
+MetaRocq Run (check_inductive None rtree). 
+(* MetaRocq Run (check_fix_ci true (@rtree_size)). *)
 
 Inductive otree := onode (l : option otree).
 
@@ -273,26 +273,25 @@ Fixpoint otree_id (t : otree) :=
   end.
 
 
-(* I feel a little bad about lying to Coq about the structural argument, but whatever *)
+(* I feel a little bad about lying to Rocq about the structural argument, but whatever *)
 #[bypass_check(guard)]
 Fixpoint rtree_size_broken {X} (t : rtree X) {struct t} := 
   match t with
   | rnode l => sumn (map (fun _ => rtree_size_broken t) l)
   end.
-MetaCoq Run (check_fix_ci false (@rtree_size_broken)). 
+MetaRocq Run (check_fix_ci false (@rtree_size_broken)). 
 
 Fixpoint test (l : list nat) := 
   match l with
   | [] => 0
   | n :: l => sumn l +  test l
   end.
-MetaCoq Run (check_fix_ci true test). 
-
+MetaRocq Run (check_fix_ci true test). 
 
 
 Module wo.
-  Variable p: nat -> Prop.
-  Variable p_dec: forall n, (p n) + ~(p n).
+  Axiom p: nat -> Prop.
+  Axiom p_dec: forall n, (p n) + ~(p n).
 
   Inductive T (n: nat) : Prop := C (phi: ~p n -> T (S n)).
 
@@ -304,7 +303,7 @@ Module wo.
       | inr H => F (S n) (Φ H)
       end.
 
-MetaCoq Run (check_fix_ci true W').
+MetaRocq Run (check_fix_ci true W').
 End wo.
 
 
@@ -313,9 +312,9 @@ End wo.
 (** Vectors *)
 Set Implicit Arguments.
 Set Asymmetric Patterns.
-Require Coq.Vectors.Vector.
+From Stdlib.Vectors Require Vector.
 
-(** Taken from  https://github.com/coq/coq/issues/4320 *)
+(** Taken from  https://github.com/rocq/rocq/issues/4320 *)
 
 Unset Guard Checking.
 Section ilist.
@@ -326,7 +325,7 @@ whose elements depend on their keys. The data structures used
 by our ADT notations uses these to implement notation-friendly
 method lookups. *)
 
-Import Coq.Vectors.VectorDef.VectorNotations.
+Import Stdlib.Vectors.VectorDef.VectorNotations.
 
 Context {A : Type}. (* The indexing type. *)
 Context {B : A -> Type}. (* The type of indexed elements. *)
@@ -337,7 +336,7 @@ match l with
 | a :: l => (B a) * (ilist l)
 end.
 
-MetaCoq Run (check_fix_ci true (@ilist)).
+MetaRocq Run (check_fix_ci true (@ilist)).
 
 Definition icons (a : A) {n} {l : Vector.t A n} (b : B a) (il : ilist l) : ilist (a :: l) := pair b il.
 
@@ -381,20 +380,20 @@ Definition ith_body
 Fixpoint ith {m : nat} {As : Vector.t A m} (il : ilist As) (n : Fin.t m) {struct n} : B (Vector.nth As n) := 
   @ ith_body (@ ith) m As il n.
 
-MetaCoq Run (check_fix_ci false (@ith)).
+MetaRocq Run (check_fix_ci false (@ith)).
 
 End ilist.
 Set Guard Checking.
 
 (** * Positivity examples *)
 
-MetaCoq Run (check_inductive None even).
+MetaRocq Run (check_inductive None even).
 
 #[bypass_check(positivity)]
 Inductive nonpos := 
   | nonposC (f : nonpos -> nat) : nonpos. 
 
-MetaCoq Run (check_inductive None nonpos).
+MetaRocq Run (check_inductive None nonpos).
 
 
 (*Inductive AczelPP (X : Type) := *)
@@ -402,8 +401,8 @@ MetaCoq Run (check_inductive None nonpos).
 
 
 (** Trying to find out what wf_paths intersection does *)
-MetaCoq Run (check_inductive (Some "odd_tree") odd).
-MetaCoq Run (check_inductive (Some "even_tree") even).
+MetaRocq Run (check_inductive (Some "odd_tree") odd).
+MetaRocq Run (check_inductive (Some "even_tree") even).
 
 (* identity *)
 (*Compute (inter_wf_paths odd_tree odd_tree).*)
@@ -418,7 +417,7 @@ Definition listnested :=
            [Node
               (Mrec (RecArgInd (* TODO: originally Imbr *)
                  {|
-                 inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"],
+                 inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"],
                                    "list");
                  inductive_ind := 0 |}))
               [mk_node Norec []; mk_node Norec [Param 1 0; Param 0 0]]].
@@ -430,7 +429,7 @@ Rec 0
   [Node
      (Mrec (RecArgInd (* TODO: originally Imbr *)
         {|
-        inductive_mind := (MPfile ["examples"; "Guarded"; "MetaCoq"],
+        inductive_mind := (MPfile ["examples"; "Guarded"; "MetaRocq"],
                           "rtree");
         inductive_ind := 0 |}))
      [mk_node Norec
@@ -441,7 +440,7 @@ Rec 0
 
 (* * ** Some examples that were incorrectly recognized as guarded until 2013 due to commutative cuts handling. *)
 
-(* https://sympa.inria.fr/sympa/arc/coq-club/2013-12/msg00119.html *)
+(* https://sympa.inria.fr/sympa/arc/rocq-club/2013-12/msg00119.html *)
 (* Set Guard Checking.
 
 Require Import ClassicalFacts. *)
@@ -467,7 +466,7 @@ end. *)
 
 
 (* 
-(* https://sympa.inria.fr/sympa/arc/coq-club/2013-12/msg00155.html *)
+(* https://sympa.inria.fr/sympa/arc/rocq-club/2013-12/msg00155.html *)
 Require Import ClassicalFacts.
 
 Inductive True1 : Prop := I1 : True1
@@ -497,7 +496,7 @@ constructor. constructor.
 Qed. *)
 
 
-Require Import Vector.
+From Stdlib.Vectors Require Import Vector.
 
 #[bypass_check(guard)]
 Fixpoint map2 {A B C : Type} (f : A -> B -> C) (n : nat) (v1 : t A n) (v2 : t B n)
@@ -511,4 +510,4 @@ Fixpoint map2 {A B C : Type} (f : A -> B -> C) (n : nat) (v1 : t A n) (v2 : t B 
                          end v1'
   end v2.
 
-MetaCoq Run (check_fix_ci false (@map2)).
+MetaRocq Run (check_fix_ci false (@map2)).

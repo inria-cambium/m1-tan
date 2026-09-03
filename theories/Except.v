@@ -1,7 +1,7 @@
-From MetaCoq.Utils Require Export monad_utils.
-From MetaCoq.Utils Require Import MCUtils.
-Export MCMonadNotation.
-Require Import List String.
+From MetaRocq.Utils Require Export monad_utils.
+From MetaRocq.Utils Require Import MRUtils.
+Export MonadNotation.
+From Stdlib Require Import List String.
 
 (** The usual exception monad based on [sum] with a parameterizable type of exceptions. *)
 

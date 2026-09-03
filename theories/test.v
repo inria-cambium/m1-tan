@@ -1,5 +1,5 @@
-From MetaCoq.Guarded Require Import plugin.
-From MetaCoq Require Import Utils.bytestring.
+From MetaRocq.Guarded Require Import plugin.
+From MetaRocq Require Import Utils.bytestring.
 
 Open Scope bs.
 
@@ -18,13 +18,13 @@ Fixpoint rtree_size (t : rtree) :=
   | rnode l => rnode l
   end.
 
-MetaCoq Quote Recursively Definition syntax := rtree_size.
+MetaRocq Quote Recursively Definition syntax := rtree_size.
 Definition Σ := Eval cbv in fst syntax.
 
-From MetaCoq.Template Require Import Ast AstUtils All.
-From MetaCoq Require Import TemplateMonad.
+From MetaRocq.Template Require Import Ast AstUtils All.
+From MetaRocq Require Import TemplateMonad.
 
-MetaCoq Run (tmBind (compute_paths_env (Σ, Universes.Monomorphic_ctx) Σ.(Ast.Env.declarations)) (fun paths_env => tmDefinition "ρ" paths_env)).
+MetaRocq Run (tmBind (compute_paths_env (Σ, Universes.Monomorphic_ctx) Σ.(Ast.Env.declarations)) (fun paths_env => tmDefinition "ρ" paths_env)).
 
 Definition t := Eval cbv in
     let t := snd syntax in
@@ -41,7 +41,7 @@ Definition t := Eval cbv in
   | _ => t
   end.
 
-From MetaCoq.Guarded Require Import Inductives.
+From MetaRocq.Guarded Require Import Inductives.
 
 Axiom printf : string -> string.
 
@@ -56,7 +56,7 @@ Definition res :=
 
 (* From ReductionEffect Require Import PrintingEffect. *)
 
-Definition failure := fun _UNBOUND_REL_3 =>
+(* Definition failure := fun _UNBOUND_REL_3 =>
   (String.String " "
    (String.String " "
       (String.String "s"
@@ -128,19 +128,19 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                              ({|
                                                                 VSet.this :=
                                                                   LevelSet.Raw.Node (BinNums.Zpos (BinNums.xO BinNums.xH)) LevelSet.Raw.Leaf Level.lzero
-                                                                    (LevelSet.Raw.Node (BinNums.Zpos BinNums.xH) LevelSet.Raw.Leaf (Level.level "Coq.Init.Datatypes.51") LevelSet.Raw.Leaf);
+                                                                    (LevelSet.Raw.Node (BinNums.Zpos BinNums.xH) LevelSet.Raw.Leaf (Level.level "Rocq.Init.Datatypes.51") LevelSet.Raw.Leaf);
                                                                 VSet.is_ok :=
                                                                   LevelSet.Raw.add_ok (s:=LevelSet.Raw.Node (BinNums.Zpos BinNums.xH) LevelSet.Raw.Leaf Level.lzero LevelSet.Raw.Leaf)
-                                                                    (Level.level "Coq.Init.Datatypes.51") (LevelSet.Raw.add_ok (s:=LevelSet.Raw.Leaf) Level.lzero LevelSet.Raw.empty_ok)
+                                                                    (Level.level "Rocq.Init.Datatypes.51") (LevelSet.Raw.add_ok (s:=LevelSet.Raw.Leaf) Level.lzero LevelSet.Raw.empty_ok)
                                                               |}, {| CS.this := ConstraintSet.Raw.Leaf; CS.is_ok := ConstraintSet.Raw.empty_ok |});
                                                            declarations :=
-                                                             [(MPfile ["test"; "Guarded"; "MetaCoq"], "rtree_size",
+                                                             [(MPfile ["test"; "Guarded"; "MetaRocq"], "rtree_size",
                                                                ConstantDecl
                                                                  {|
                                                                    cst_type :=
                                                                      tProd {| binder_name := nNamed "t"; binder_relevance := Relevant |}
-                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} [])
-                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []);
+                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} [])
+                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []);
                                                                    cst_body :=
                                                                      Some
                                                                        (tFix
@@ -148,43 +148,43 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                              dname := {| binder_name := nNamed "rtree_size"; binder_relevance := Relevant |};
                                                                              dtype :=
                                                                                tProd {| binder_name := nNamed "t"; binder_relevance := Relevant |}
-                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} [])
-                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []);
+                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} [])
+                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []);
                                                                              dbody :=
                                                                                tLambda {| binder_name := nNamed "t"; binder_relevance := Relevant |}
-                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} [])
+                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} [])
                                                                                  (tLetIn {| binder_name := nNamed "map_id"; binder_relevance := Relevant |}
                                                                                     (tFix
                                                                                        [{|
                                                                                           dname := {| binder_name := nNamed "map"; binder_relevance := Relevant |};
                                                                                           dtype :=
                                                                                             tProd {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []])
-                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []]);
+                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []])
+                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []]);
                                                                                           dbody :=
                                                                                             tLambda {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []])
+                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []])
                                                                                               (tCase
                                                                                                  {|
-                                                                                                   ci_ind := {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |};
+                                                                                                   ci_ind := {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |};
                                                                                                    ci_npar := 1;
                                                                                                    ci_relevance := Relevant
                                                                                                  |}
                                                                                                  {|
                                                                                                    puinst := [];
                                                                                                    pparams :=
-                                                                                                     [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                     [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                         []];
                                                                                                    pcontext := [{| binder_name := nNamed "l"; binder_relevance := Relevant |}];
                                                                                                    preturn :=
                                                                                                      tApp
-                                                                                                       (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |}
+                                                                                                       (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |}
                                                                                                           [])
                                                                                                        [tInd
-                                                                                                          {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                          {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                           []]
                                                                                                  |} (tRel 0)
                                                                                                  [{|
@@ -192,10 +192,10 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                                     bbody :=
                                                                                                       tApp
                                                                                                         (tConstruct
-                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} 0
+                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} 0
                                                                                                            [])
                                                                                                         [tInd
-                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                            []]
                                                                                                   |};
                                                                                                   {|
@@ -205,30 +205,30 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                                     bbody :=
                                                                                                       tApp
                                                                                                         (tConstruct
-                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} 1
+                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} 1
                                                                                                            [])
                                                                                                         [tInd
-                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                            []; tApp (tRel 5) [tRel 1];
                                                                                                          tApp
                                                                                                            (tConstruct
-                                                                                                              {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |}
+                                                                                                              {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |}
                                                                                                               0 [])
                                                                                                            [tInd
                                                                                                               {|
-                                                                                                                inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0
+                                                                                                                inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0
                                                                                                               |} []]]
                                                                                                   |}]);
                                                                                           rarg := 0
                                                                                         |}] 0)
                                                                                     (tProd {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []])
-                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []]))
+                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []])
+                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []]))
                                                                                     (tCase
                                                                                        {|
-                                                                                         ci_ind := {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |};
+                                                                                         ci_ind := {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |};
                                                                                          ci_npar := 0;
                                                                                          ci_relevance := Relevant
                                                                                        |}
@@ -237,13 +237,13 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                          pparams := [];
                                                                                          pcontext := [{| binder_name := nNamed "t"; binder_relevance := Relevant |}];
                                                                                          preturn :=
-                                                                                           tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []
+                                                                                           tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []
                                                                                        |} (tRel 1)
                                                                                        [{|
                                                                                           bcontext := [{| binder_name := nNamed "l"; binder_relevance := Relevant |}];
                                                                                           bbody :=
                                                                                             tApp
-                                                                                              (tConstruct {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                              (tConstruct {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                  0 []) [tRel 0]
                                                                                         |}]));
                                                                              rarg := 0
@@ -251,7 +251,7 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                    cst_universes := Monomorphic_ctx;
                                                                    cst_relevance := Relevant
                                                                  |});
-                                                              (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree",
+                                                              (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree",
                                                                InductiveDecl
                                                                  {|
                                                                    ind_finite := Finite;
@@ -285,12 +285,12 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                   decl_name := {| binder_name := nNamed "l"; binder_relevance := Relevant |};
                                                                                   decl_body := None;
                                                                                   decl_type :=
-                                                                                    tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} []) [tRel 0]
+                                                                                    tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} []) [tRel 0]
                                                                                 |}];
                                                                              cstr_indices := [];
                                                                              cstr_type :=
                                                                                tProd {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                 (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} []) [tRel 0])
+                                                                                 (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} []) [tRel 0])
                                                                                  (tRel 1);
                                                                              cstr_arity := 1
                                                                            |}];
@@ -300,7 +300,7 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                    ind_universes := Monomorphic_ctx;
                                                                    ind_variance := None
                                                                  |});
-                                                              (MPfile ["Datatypes"; "Init"; "Coq"], "list",
+                                                              (MPfile ["Datatypes"; "Init"; "Rocq"], "list",
                                                                InductiveDecl
                                                                  {|
                                                                    ind_finite := Finite;
@@ -315,8 +315,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                {|
                                                                                  t_set :=
                                                                                    {|
-                                                                                     LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                     LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                     LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                     LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                    |};
                                                                                  t_ne := eq_refl
                                                                                |})
@@ -330,13 +330,13 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                             {|
                                                                               t_set :=
                                                                                 {|
-                                                                                  LevelExprSet.this := [(Level.lzero, 0); (Level.level "Coq.Init.Datatypes.51", 0)];
+                                                                                  LevelExprSet.this := [(Level.lzero, 0); (Level.level "Rocq.Init.Datatypes.51", 0)];
                                                                                   LevelExprSet.is_ok :=
-                                                                                    LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                    LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                       (LevelExprSet.Raw.singleton_ok (Level.lzero, 0))
                                                                                 |};
                                                                               t_ne :=
-                                                                                Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                   {|
                                                                                     t_set :=
                                                                                       {|
@@ -352,8 +352,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                   {|
                                                                                     t_set :=
                                                                                       {|
-                                                                                        LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                        LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                        LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                        LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                       |};
                                                                                     t_ne := eq_refl
                                                                                   |}))
@@ -362,13 +362,13 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                   {|
                                                                                     t_set :=
                                                                                       {|
-                                                                                        LevelExprSet.this := [(Level.lzero, 0); (Level.level "Coq.Init.Datatypes.51", 0)];
+                                                                                        LevelExprSet.this := [(Level.lzero, 0); (Level.level "Rocq.Init.Datatypes.51", 0)];
                                                                                         LevelExprSet.is_ok :=
-                                                                                          LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                          LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                             (LevelExprSet.Raw.singleton_ok (Level.lzero, 0))
                                                                                       |};
                                                                                     t_ne :=
-                                                                                      Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                      Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                         {|
                                                                                           t_set :=
                                                                                             {|
@@ -391,8 +391,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                        {|
                                                                                          t_set :=
                                                                                            {|
-                                                                                             LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                             LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                            |};
                                                                                          t_ne := eq_refl
                                                                                        |})) (tApp (tRel 1) [tRel 0]);
@@ -414,8 +414,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                        {|
                                                                                          t_set :=
                                                                                            {|
-                                                                                             LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                             LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                            |};
                                                                                          t_ne := eq_refl
                                                                                        |}))
@@ -431,9 +431,9 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                  |})];
                                                            retroknowledge :=
                                                              {|
-                                                               Retroknowledge.retro_int63 := Some (MPfile ["PrimInt63"; "Int63"; "Cyclic"; "Numbers"; "Coq"], "int");
-                                                               Retroknowledge.retro_float64 := Some (MPfile ["PrimFloat"; "Floats"; "Coq"], "float");
-                                                               Retroknowledge.retro_array := Some (MPfile ["PArray"; "Array"; "Coq"], "array")
+                                                               Retroknowledge.retro_int63 := Some (MPfile ["PrimInt63"; "Int63"; "Cyclic"; "Numbers"; "Rocq"], "int");
+                                                               Retroknowledge.retro_float64 := Some (MPfile ["PrimFloat"; "Floats"; "Rocq"], "float");
+                                                               Retroknowledge.retro_array := Some (MPfile ["PArray"; "Array"; "Rocq"], "array")
                                                              |}
                                                          |}, Monomorphic_ctx) (guardchecker.loc_env G) t0)%bs
                                                  | guardchecker.SArg s =>
@@ -444,19 +444,19 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                              ({|
                                                                 VSet.this :=
                                                                   LevelSet.Raw.Node (BinNums.Zpos (BinNums.xO BinNums.xH)) LevelSet.Raw.Leaf Level.lzero
-                                                                    (LevelSet.Raw.Node (BinNums.Zpos BinNums.xH) LevelSet.Raw.Leaf (Level.level "Coq.Init.Datatypes.51") LevelSet.Raw.Leaf);
+                                                                    (LevelSet.Raw.Node (BinNums.Zpos BinNums.xH) LevelSet.Raw.Leaf (Level.level "Rocq.Init.Datatypes.51") LevelSet.Raw.Leaf);
                                                                 VSet.is_ok :=
                                                                   LevelSet.Raw.add_ok (s:=LevelSet.Raw.Node (BinNums.Zpos BinNums.xH) LevelSet.Raw.Leaf Level.lzero LevelSet.Raw.Leaf)
-                                                                    (Level.level "Coq.Init.Datatypes.51") (LevelSet.Raw.add_ok (s:=LevelSet.Raw.Leaf) Level.lzero LevelSet.Raw.empty_ok)
+                                                                    (Level.level "Rocq.Init.Datatypes.51") (LevelSet.Raw.add_ok (s:=LevelSet.Raw.Leaf) Level.lzero LevelSet.Raw.empty_ok)
                                                               |}, {| CS.this := ConstraintSet.Raw.Leaf; CS.is_ok := ConstraintSet.Raw.empty_ok |});
                                                            declarations :=
-                                                             [(MPfile ["test"; "Guarded"; "MetaCoq"], "rtree_size",
+                                                             [(MPfile ["test"; "Guarded"; "MetaRocq"], "rtree_size",
                                                                ConstantDecl
                                                                  {|
                                                                    cst_type :=
                                                                      tProd {| binder_name := nNamed "t"; binder_relevance := Relevant |}
-                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} [])
-                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []);
+                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} [])
+                                                                       (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []);
                                                                    cst_body :=
                                                                      Some
                                                                        (tFix
@@ -464,43 +464,43 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                              dname := {| binder_name := nNamed "rtree_size"; binder_relevance := Relevant |};
                                                                              dtype :=
                                                                                tProd {| binder_name := nNamed "t"; binder_relevance := Relevant |}
-                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} [])
-                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []);
+                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} [])
+                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []);
                                                                              dbody :=
                                                                                tLambda {| binder_name := nNamed "t"; binder_relevance := Relevant |}
-                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} [])
+                                                                                 (tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} [])
                                                                                  (tLetIn {| binder_name := nNamed "map_id"; binder_relevance := Relevant |}
                                                                                     (tFix
                                                                                        [{|
                                                                                           dname := {| binder_name := nNamed "map"; binder_relevance := Relevant |};
                                                                                           dtype :=
                                                                                             tProd {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []])
-                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []]);
+                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []])
+                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []]);
                                                                                           dbody :=
                                                                                             tLambda {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []])
+                                                                                              (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                                 [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []])
                                                                                               (tCase
                                                                                                  {|
-                                                                                                   ci_ind := {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |};
+                                                                                                   ci_ind := {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |};
                                                                                                    ci_npar := 1;
                                                                                                    ci_relevance := Relevant
                                                                                                  |}
                                                                                                  {|
                                                                                                    puinst := [];
                                                                                                    pparams :=
-                                                                                                     [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                     [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                         []];
                                                                                                    pcontext := [{| binder_name := nNamed "l"; binder_relevance := Relevant |}];
                                                                                                    preturn :=
                                                                                                      tApp
-                                                                                                       (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |}
+                                                                                                       (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |}
                                                                                                           [])
                                                                                                        [tInd
-                                                                                                          {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                          {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                           []]
                                                                                                  |} (tRel 0)
                                                                                                  [{|
@@ -508,10 +508,10 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                                     bbody :=
                                                                                                       tApp
                                                                                                         (tConstruct
-                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} 0
+                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} 0
                                                                                                            [])
                                                                                                         [tInd
-                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                            []]
                                                                                                   |};
                                                                                                   {|
@@ -521,30 +521,30 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                                     bbody :=
                                                                                                       tApp
                                                                                                         (tConstruct
-                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} 1
+                                                                                                           {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} 1
                                                                                                            [])
                                                                                                         [tInd
-                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                                           {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                            []; tApp (tRel 5) [tRel 1];
                                                                                                          tApp
                                                                                                            (tConstruct
-                                                                                                              {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |}
+                                                                                                              {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |}
                                                                                                               0 [])
                                                                                                            [tInd
                                                                                                               {|
-                                                                                                                inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0
+                                                                                                                inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0
                                                                                                               |} []]]
                                                                                                   |}]);
                                                                                           rarg := 0
                                                                                         |}] 0)
                                                                                     (tProd {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []])
-                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} [])
-                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []]))
+                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []])
+                                                                                       (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} [])
+                                                                                          [tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []]))
                                                                                     (tCase
                                                                                        {|
-                                                                                         ci_ind := {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |};
+                                                                                         ci_ind := {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |};
                                                                                          ci_npar := 0;
                                                                                          ci_relevance := Relevant
                                                                                        |}
@@ -553,13 +553,13 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                          pparams := [];
                                                                                          pcontext := [{| binder_name := nNamed "t"; binder_relevance := Relevant |}];
                                                                                          preturn :=
-                                                                                           tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |} []
+                                                                                           tInd {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |} []
                                                                                        |} (tRel 1)
                                                                                        [{|
                                                                                           bcontext := [{| binder_name := nNamed "l"; binder_relevance := Relevant |}];
                                                                                           bbody :=
                                                                                             tApp
-                                                                                              (tConstruct {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree"); inductive_ind := 0 |}
+                                                                                              (tConstruct {| inductive_mind := (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree"); inductive_ind := 0 |}
                                                                                                  0 []) [tRel 0]
                                                                                         |}]));
                                                                              rarg := 0
@@ -567,7 +567,7 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                    cst_universes := Monomorphic_ctx;
                                                                    cst_relevance := Relevant
                                                                  |});
-                                                              (MPfile ["test"; "Guarded"; "MetaCoq"], "rtree",
+                                                              (MPfile ["test"; "Guarded"; "MetaRocq"], "rtree",
                                                                InductiveDecl
                                                                  {|
                                                                    ind_finite := Finite;
@@ -601,12 +601,12 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                   decl_name := {| binder_name := nNamed "l"; binder_relevance := Relevant |};
                                                                                   decl_body := None;
                                                                                   decl_type :=
-                                                                                    tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} []) [tRel 0]
+                                                                                    tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} []) [tRel 0]
                                                                                 |}];
                                                                              cstr_indices := [];
                                                                              cstr_type :=
                                                                                tProd {| binder_name := nNamed "l"; binder_relevance := Relevant |}
-                                                                                 (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Coq"], "list"); inductive_ind := 0 |} []) [tRel 0])
+                                                                                 (tApp (tInd {| inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"], "list"); inductive_ind := 0 |} []) [tRel 0])
                                                                                  (tRel 1);
                                                                              cstr_arity := 1
                                                                            |}];
@@ -616,7 +616,7 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                    ind_universes := Monomorphic_ctx;
                                                                    ind_variance := None
                                                                  |});
-                                                              (MPfile ["Datatypes"; "Init"; "Coq"], "list",
+                                                              (MPfile ["Datatypes"; "Init"; "Rocq"], "list",
                                                                InductiveDecl
                                                                  {|
                                                                    ind_finite := Finite;
@@ -631,8 +631,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                {|
                                                                                  t_set :=
                                                                                    {|
-                                                                                     LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                     LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                     LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                     LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                    |};
                                                                                  t_ne := eq_refl
                                                                                |})
@@ -646,13 +646,13 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                             {|
                                                                               t_set :=
                                                                                 {|
-                                                                                  LevelExprSet.this := [(Level.lzero, 0); (Level.level "Coq.Init.Datatypes.51", 0)];
+                                                                                  LevelExprSet.this := [(Level.lzero, 0); (Level.level "Rocq.Init.Datatypes.51", 0)];
                                                                                   LevelExprSet.is_ok :=
-                                                                                    LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                    LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                       (LevelExprSet.Raw.singleton_ok (Level.lzero, 0))
                                                                                 |};
                                                                               t_ne :=
-                                                                                Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                   {|
                                                                                     t_set :=
                                                                                       {|
@@ -668,8 +668,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                   {|
                                                                                     t_set :=
                                                                                       {|
-                                                                                        LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                        LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                        LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                        LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                       |};
                                                                                     t_ne := eq_refl
                                                                                   |}))
@@ -678,13 +678,13 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                   {|
                                                                                     t_set :=
                                                                                       {|
-                                                                                        LevelExprSet.this := [(Level.lzero, 0); (Level.level "Coq.Init.Datatypes.51", 0)];
+                                                                                        LevelExprSet.this := [(Level.lzero, 0); (Level.level "Rocq.Init.Datatypes.51", 0)];
                                                                                         LevelExprSet.is_ok :=
-                                                                                          LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                          LevelExprSet.Raw.add_ok (s:=[(Level.lzero, 0)]) (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                             (LevelExprSet.Raw.singleton_ok (Level.lzero, 0))
                                                                                       |};
                                                                                     t_ne :=
-                                                                                      Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                      Universes.NonEmptySetFacts.add_obligation_1 (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                         {|
                                                                                           t_set :=
                                                                                             {|
@@ -707,8 +707,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                        {|
                                                                                          t_set :=
                                                                                            {|
-                                                                                             LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                             LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                            |};
                                                                                          t_ne := eq_refl
                                                                                        |})) (tApp (tRel 1) [tRel 0]);
@@ -730,8 +730,8 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                                        {|
                                                                                          t_set :=
                                                                                            {|
-                                                                                             LevelExprSet.this := [(Level.level "Coq.Init.Datatypes.51", 0)];
-                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Coq.Init.Datatypes.51", 0)
+                                                                                             LevelExprSet.this := [(Level.level "Rocq.Init.Datatypes.51", 0)];
+                                                                                             LevelExprSet.is_ok := LevelExprSet.Raw.singleton_ok (Level.level "Rocq.Init.Datatypes.51", 0)
                                                                                            |};
                                                                                          t_ne := eq_refl
                                                                                        |}))
@@ -747,20 +747,20 @@ Definition failure := fun _UNBOUND_REL_3 =>
                                                                  |})];
                                                            retroknowledge :=
                                                              {|
-                                                               Retroknowledge.retro_int63 := Some (MPfile ["PrimInt63"; "Int63"; "Cyclic"; "Numbers"; "Coq"], "int");
-                                                               Retroknowledge.retro_float64 := Some (MPfile ["PrimFloat"; "Floats"; "Coq"], "float");
-                                                               Retroknowledge.retro_array := Some (MPfile ["PArray"; "Array"; "Coq"], "array")
+                                                               Retroknowledge.retro_int63 := Some (MPfile ["PrimInt63"; "Int63"; "Cyclic"; "Numbers"; "Rocq"], "int");
+                                                               Retroknowledge.retro_float64 := Some (MPfile ["PrimFloat"; "Floats"; "Rocq"], "float");
+                                                               Retroknowledge.retro_array := Some (MPfile ["PArray"; "Array"; "Rocq"], "array")
                                                              |}
                                                          |}, Monomorphic_ctx) s)%bs
                                                  end) a :: map t)%list
                                            end) _UNBOUND_REL_3)))))))))))))).
 About failure.
-Eval lazy in failure [].
+Eval lazy in failure []. *)
 
-Require Import List.
+From Stdlib Require Import List.
 
 Require Import Extraction.
-From Coq Require Import Ascii FSets ExtrOcamlBasic ExtrOCamlFloats ExtrOCamlInt63.
+From Stdlib Require Import Ascii FSets ExtrOcamlBasic ExtrOCamlFloats ExtrOCamlInt63.
 
 Extract Constant printf => "fun x -> print_endline (Obj.magic x) ; x".
 

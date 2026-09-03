@@ -451,10 +451,10 @@ Definition i0_ := (LIMP (fun _ => CIMP (fun _ x => x))).
 
 End FailAll.
 
-Require Import MetaCoq.Guarded.plugin.
-Require Import MetaCoq.Utils.bytestring.
+Require Import MetaRocq.Guarded.plugin.
+Require Import MetaRocq.Utils.bytestring.
 Open Scope bs.
 
-MetaCoq Run (check_module "CheckAll").
-(* MetaCoq Run (check_fix CheckAll.NestedApplicationsWithVariables.f). *)
-(* MetaCoq Run (check_module "FailAll"). *)
+MetaRocq Run (check_module "CheckAll").
+(* MetaRocq Run (check_fix CheckAll.NestedApplicationsWithVariables.f). *)
+(* MetaRocq Run (check_module "FailAll"). *)
