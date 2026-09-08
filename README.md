@@ -1,7 +1,7 @@
 # Rocq's guard checker implemented in MetaRocq
 
 This repository contains the guard checker of Rocq implemented in Rocq,
-using the MetaRocq project, .
+using the MetaRocq project.
 
 ## Installation
 ```sh
