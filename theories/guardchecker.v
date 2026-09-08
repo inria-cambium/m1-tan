@@ -15,7 +15,7 @@ Notation tracep s := (trace s).
 (*Definition print {A} (a : A) : exc unit := *)
   (*ret (print a).*)
 
-(* YJ: pathsEnv := list (kername * (list wf_paths)) *)
+(* pathsEnv is [list (kername * (list wf_paths))] *)
 Implicit Types (Σ : global_env_ext) (Γ : context) (ρ : pathsEnv). 
 
 
@@ -171,7 +171,7 @@ Definition subterm_spec_glb (sl : list subterm_spec) : exc subterm_spec :=
 (** *** Guard env *)
 
 (** Environment to keep track of guardedness information *)
-(* YJ: [loc_env] is virtually [list (kername * option term)].
+(* [loc_env] is virtually [list (kername * option term)].
   
   It is of length equals to [an; ... ; a1; fixk; ... ; fix1] for [fixi]
   where i ∈ [1,k], and the recursive argument of [fixi] is the n-th (ie. a_n, dB 0).
@@ -195,20 +195,20 @@ Implicit Type (G : guard_env).
     e.g. for [fix r (n1 : nat) (n2 : nat) {struct n1} := ....] it would be 0.
   [tree] is the recursion tree for the inductive type of the recursive argument.
 *)
-(* YJ: again, the shape is [recarg; ... ; arg1; fixk; ... fix1]
+(* Again, the shape is [recarg; ... ; arg1; fixk; ... fix1]
 so [rel_min_fix] being [1+recarg_pos] makes sense.
 *)
 (* Counterpart: [make_renv] *)
 Definition init_guard_env Γ recarg tree :=
   {| 
     loc_env := Γ;
-    (** Rel 0 -> recursive argument, YJ: due to ind_of_mutfix
+    (** Rel 0 -> recursive argument, due to ind_of_mutfix
        Rel recarg -> first "proper" (non-recursive) argument,
-       Rel (S recarg) -> last fixpoint in this block YJ: look at check_fix
+       Rel (S recarg) -> last fixpoint in this block (look at check_fix)
     *)
     rel_min_fix := S recarg;
     guarded_env := [Subterm Natset.empty Large tree] 
-    (* YJ : the single element corresponds to the head of [loc_env], ie the recursive argument *)
+    (* The single element corresponds to the head of [loc_env], ie the recursive argument *)
   |}.
 
 (** Push a binder with name [na], type [type] and subterm specification [spec] *)
@@ -244,7 +244,7 @@ Definition push_var_guard_env G n na ty :=
   let spec := if Nat.leb 1 n then Internally_bound_subterm (Natset.singleton n) else Not_subterm in
   push_var G (na, ty, spec).
 
-(** YJ: is it safe to None => Not_subterm since initialization yields
+(** Is it safe to None => Not_subterm since initialization yields
   G.guarded_env := [Subterm Large tree] ?
   - First thought: probably okay since we "split" the fixpoint s.t. recarg
     has dB index = 0. Any index greater than that is not a recarg for sure. *)
@@ -443,7 +443,7 @@ Definition branches_binders_specif Σ G (discriminant_spec : subterm_spec) (ind 
           ret $ tabulate (fun _ => Not_subterm) ar 
         else 
           (** get trees for the arguments of the i-th constructor *)
-          (** YJ: perhaps too much work, just need to map on the i-th branch
+          (** Perhaps too much work, just need to map on the i-th branch
             instead of all constructors? 
             
             Also "size" here means "tree". Idk why the ambiguity :/ *)
@@ -835,7 +835,7 @@ Fixpoint subterm_specif Σ ρ G (stack : list stack_element) t {struct t}: exc s
       ret $ lookup_subterm G k
   | tCase ind_relev rtf discriminant branches =>
       '(rtf_preturn_expanded, branches) <- expand_case Σ ind_relev rtf branches ;;
-      (* YJ: [ind] is the inductive type we are matching on *)
+      (* [ind] is the inductive type we are matching on *)
       let ind := ind_relev.(ci_ind) in
       (** push l to the stack *)
       let stack' := push_stack_closures G stack l in
@@ -1266,7 +1266,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
     what is allowed to flow through the rtf (???)
 
   then f is guarded with respect to the set of subterms S in [g a1 ... am].
-    (YJ: Taken from Eduardo's "Codifying guarded recursions" )
+    (Taken from Eduardo's "Codifying guarded recursions" )
   *)
   | tCase ci ti discriminant branches => 
       trace "check_rec_call_stack :: tCase" ;;
@@ -1340,7 +1340,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
       [g l1 ... lm] is guarded wrt S if:
         1. f is guarded wrt the set of subterms S in l1 ... lm        
         2. f is guarded wrt the set of subterms S in T1 ... Tp        
-        YJ: why is condition 3 necessary?
+        why is condition 3 necessary?
         3. lp, the recursive argument of g, is a sub-term of the recursive argument of f
           and f is guarded wrt the set of subterms S ∪ {yp} in e
           OR
@@ -1585,7 +1585,7 @@ with check_rec_call G rs c {struct rs} : exc (fix_check_result * list fix_check_
   trace ("check_rec_call done ::  ("^ string_of_nat (String.length str) ^ ")") ;;
   ret (head, tail).
 
-(* YJ: just a wrapper to check_rec_call. *)
+(* just a wrapper to check_rec_call. *)
 (** Check if [def] is a guarded fixpoint body, with arguments up to (and including)
   the recursive argument being introduced in the context [G]. 
   [G] has been initialized with initial guardedness information on the recursive argument.
@@ -1605,7 +1605,7 @@ End CheckFix.
 Set Guard Checking.
 
 
-(* YJ: This function "chops" an inductive into the recursive part and the rest.
+(* This function "chops" an inductive into the recursive part and the rest.
   As an example: [fixp] is a singleton list (non-mutual fixpoint) containing
   <<
   Fixpoint f a (b : List X) c {struct b} := match b with ... end.
@@ -1619,7 +1619,7 @@ Set Guard Checking.
 #[bypass_check(guard)]
 Definition inductive_of_mutfix Σ Γ (fixp : mfixpoint term) : exc (list inductive * list (context * term)):= 
   let number_of_fixes := #|fixp| in
-  (* YJ: which cannot be an empty list. We extract the name, type, and body *)
+  (* which cannot be an empty list. We extract the name, type, and body *)
   assert (number_of_fixes != 0) (OtherErr "inductive_of_mutfix" "ill-formed fix");;
   let ftypes := map dtype fixp in
   let fnames := map dname fixp in 
@@ -1628,23 +1628,23 @@ Definition inductive_of_mutfix Σ Γ (fixp : mfixpoint term) : exc (list inducti
   (** push fixpoints to local context *)
   let Γ_fix := push_assumptions_context (fnames, ftypes) Γ in
 
-  (* YJ: this function will be iterated onto each fixpoint of [fixp]. *)
+  (* this function will be iterated onto each fixpoint of [fixp]. *)
   (** Check the i-th definition [fixdef] of the mutual inductive block where k is the recursive argument, 
     making sure that no invalid recursive calls are in the types of the first [k] arguments, 
     make sure that the recursion is over an inductive type, 
     and return that inductive together with the body of [fixdef] after the recursive arguement
     together with its context. *)
-  (* YJ: dependent types - the recursive argument might be dependent on previous arguments,
+  (* dependent types - the recursive argument might be dependent on previous arguments,
     so we have to check UNTIL the recarg. Every fixpoint can only have a recarg,
     so the rest can be thought of as part of the "body" without recarg. *)
-  (* YJ: parameter [i] is unused?? YEP, removing [i] and using [map2] instead
+  (* parameter [i] is unused?? YEP, removing [i] and using [map2] instead
   of [map2_i] works perfectly *)
   let find_ind i k fixdef : exc (inductive * (context * term)):= 
       (** check that a rec call to the fixpoint [fixdef] does not appear in the [k] first abstractions,
         that the recursion is over an inductive, and 
         gives the inductive and the body + environment of [fixdef] after introducing the first [k] arguments *)
       let check_occur := fix check_occur Γ n (def : term) {struct def}: exc (inductive * (context * term)) := 
-        (* YJ: this is the main runner. It opens up k [tLambda]s and then run *)
+        (* this is the main runner. It opens up k [tLambda]s and then run *)
         (** n is the number of lambdas we're under/aka the dB from which the mutual fixes are starting:
           n ... n + number_of_fixes - 1 *)
         def_whd <- whd_all Σ Γ def;;
@@ -1680,7 +1680,7 @@ Definition inductive_of_mutfix Σ Γ (fixp : mfixpoint term) : exc (list inducti
   ret (map fst rv : list inductive, map snd rv : list (context * term)).
 
 
-(* YJ: check_fix is just mapping check_one_fix over the different branches. (I know, I know) *)
+(* check_fix is just mapping check_one_fix over the different branches. (I know, I know) *)
 (** The entry point for checking fixpoints. 
   [Σ]: the global environment with all definitions used in [mfix]. 
   [ρ]: the global environment of wf_paths (for every inductive in Σ, this should contain the wf_paths).
@@ -1694,7 +1694,7 @@ Definition check_fix Σ (ρ : pathsEnv) Γ (mfix : mfixpoint term) : exc unit :=
   (* trace "enter check_fix";; *)
   '(minds, rec_defs) <- inductive_of_mutfix Σ Γ mfix;;
   (** get the inductive definitions -- note that the mibs should all be the same*)
-  (* YJ: the oib is the fixpoint among mib whose name is "exposed". *)
+  (* the oib is the fixpoint among mib whose name is "exposed". *)
   specifs <- unwrap $ map (lookup_mind_specif Σ) minds;;
   let mibs := map fst specifs in
   let oibs := map snd specifs in

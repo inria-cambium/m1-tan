@@ -20,7 +20,6 @@ Notation loc := string (only parsing).
 From MetaRocq.Guarded Require Export Trace. 
 Export MonadNotation.
 
-(** TODO YJ: what do the parameters mean? *)
 Inductive fix_guard_error :=
   | NotEnoughAbstractionInFixBody
   | RecursionNotOnInductiveType : term -> fix_guard_error
@@ -728,7 +727,7 @@ Definition wf_paths_constr_args_sizes t i : exc (list wf_paths) :=
 list of trees. Each inner list corresponds to a constructor of [t], and has
 a tree for every argument of the constructor. (edit: clarity) *)
 Definition wf_paths_all_constr_args_sizes t : exc (list (list wf_paths)) := 
-  destruct_node t (fun ra constrs => (** YJ: constrs = constructors not constraints :sweat_smile: *)
+  destruct_node t (fun ra constrs => (** constrs = constructors not constraints :sweat_smile: *)
     assert (match ra with Norec => false | _ => true end) $ ProgrammingErr "wf_paths_constr_args_sizes" "should not be called with Norec";;
     l <- unwrap $ map (fun t => destruct_node t (fun _ args => ret args) (raise $ ProgrammingErr "wf_paths_all_constr_args_sizes" "expected node")) 
       constrs;;

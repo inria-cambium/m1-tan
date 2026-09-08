@@ -1,16 +1,16 @@
 (* Type of regular trees:
    - Param denotes tree variables (like de Bruijn indices) ()
-     the first int is the depth of the occurrence (YJ: in nested inductive types),
+     the first int is the depth of the occurrence (in nested inductive types),
      and the second int is the index in the array of trees introduced at that depth
-     (YJ: index in mutual inductive types).
+     (index in mutual inductive types).
      ==============================================================================    Warning: Param's indices both start at 0!!!
-   - Node denotes the usual tree node, labelled with X (YJ: exclusively recargs
+   - Node denotes the usual tree node, labelled with X (exclusively recargs
       in the current implementation. [children] contains [Param]s, one for each
       constructor.)
 
    - Rec(j,v1..vn) introduces an infinite tree. It denotes v(j+1) with
     parameters 0..n-1 replaced by Rec(0,v1..vn)..Rec(n-1,v1..vn) respectively.
-    (YJ: The root of a tree is always Rec. Mutual branches get Rec0, Rec1, etc.
+    (The root of a tree is always Rec. Mutual branches get Rec0, Rec1, etc.
     The name of Rec comes from "Recursive Types".
 
     [children] is a list of the mutual inductive types in the block. Say A, B
