@@ -162,7 +162,7 @@ Fail Fixpoint geneq s (x: list nat) {struct s} : Prop :=
 
 End ReturningInductive.
 
-(* TODO YF: doesn't work live, maybe works with OCaml? *)
+(* TODO: doesn't work live, maybe works with OCaml? *)
 (* Module NestingAndUnfolding. *)
 
 (* Fail Fixpoint f (x:nat) := id (fix g x : nat := f x) 0. *)
@@ -175,7 +175,7 @@ End ReturningInductive.
 
 (* End NestingAndUnfolding. *)
 
-(* TODO YF: doesn't work live, maybe works with OCaml? *)
+(* TODO: doesn't work live, maybe works with OCaml? *)
 (* Module NestingAndConstructedUnfolding. *)
 
 (* Definition fold_left {A B : Type} (f : A -> B -> A) := *)
@@ -345,7 +345,7 @@ Fixpoint f x n :=
 
 End NestedApplicationsWithProjections.
 
-(* TODO YF: doesn't work live, maybe works with OCaml? *)
+(* TODO: doesn't work live, maybe works with OCaml? *)
 (* Module NestedRedexesWithFix.
 
 Fixpoint f n :=
