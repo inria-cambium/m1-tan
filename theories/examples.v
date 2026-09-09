@@ -11,7 +11,7 @@ From MetaRocq.Guarded Require Import MRRTree Inductives.
 Fixpoint boom (x: nat) : False := boom (id (pred x + O)).
 MetaRocq Run (check_fix_ci false boom).
 
-Print Nat.sub.
+(* Print Nat.sub. *)
 Fixpoint div (n m : nat) := 
   match n with 
   | 0 => 0
@@ -415,7 +415,7 @@ MetaRocq Run (check_inductive (Some "even_tree") even).
 Definition listnested := 
       Rec 0
            [Node
-              (Mrec (RecArgInd (* TODO: originally Imbr *)
+              (Mrec (RecArgInd (* originally Imbr *)
                  {|
                  inductive_mind := (MPfile ["Datatypes"; "Init"; "Rocq"],
                                    "list");
@@ -427,7 +427,7 @@ Definition listnested :=
 Definition nonrec_rtree := 
 Rec 0
   [Node
-     (Mrec (RecArgInd (* TODO: originally Imbr *)
+     (Mrec (RecArgInd (* originally Imbr *)
         {|
         inductive_mind := (MPfile ["examples"; "Guarded"; "MetaRocq"],
                           "rtree");
