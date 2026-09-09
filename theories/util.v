@@ -70,6 +70,21 @@ Definition list_eqb {X : Type} (eqbX : X -> X -> bool) := fix rec l l' :=
   | _, _ => false
   end.
 
+(** [list_eqb] decides Leibniz equality as soon as its argument does so on the
+  elements of the given list. Stated with a pointwise hypothesis (rather than
+  [ReflectEq X]) so that it can be used for the nested recursion of [rtree]. *)
+Lemma list_eqb_spec {X : Type} (f : X -> X -> bool) (l : list X) :
+  Forall (fun x => forall y, reflectProp (x = y) (f x y)) l ->
+  forall l', reflectProp (l = l') (list_eqb f l l').
+Proof.
+  induction 1 as [| x l Hx Hl IH]; intros [| y l']; cbn.
+  1: now constructor.
+  1-2: constructor; congruence.
+  destruct (Hx y); [subst | ]; cbn.
+  - destruct (IH l'); [subst | ]; constructor; congruence.
+  - constructor; congruence.
+Qed.
+
 Definition forallb2 {X : Type} (f : X -> X -> bool) := fix rec l l' :=
   match l, l' with
   | nil, nil => true

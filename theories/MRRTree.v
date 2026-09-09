@@ -36,8 +36,6 @@ From Stdlib.Arith Require Import PeanoNat.
 From MetaRocq.Utils Require Import MRUtils.
 From MetaRocq.Guarded Require Import util.
 
-(* TODO: proper exception handling with the except monad *)
-
 Open Scope bool_scope.
 
 Unset Guard Checking.
@@ -100,7 +98,7 @@ Fixpoint expand t :=
    the bodies actually build something by checking it is not
    directly one of the parameters of depth 0. Some care is taken to
    accept definitions like  rec X=Y and Y=f(X,Y) *)
-(* TODO: well, does it actually check that?? expanding first does not seem to be smart, see example from before *)
+(* Does it actually check that?? expanding first does not seem to be smart, see example from before *)
 Definition mk_rec defs :=
   let check := fix rec (histo : set nat) d {struct d} :=
     match expand d with
@@ -215,3 +213,38 @@ Definition rtree_incl (eqb : X -> X -> bool) interlbl def t t' :=
   | _ => false
   end.
 End trees.
+
+Set Guard Checking.
+
+(** Unfolding equations for [rtree_eqb]: they expose the recursive occurrences
+  as [rtree_eqb eqbX] instead of the raw [fix], which is what proofs need. *)
+Lemma rtree_eqb_Param {X} (eqbX : X -> X -> bool) i j i' j' :
+  rtree_eqb eqbX (Param i j) (Param i' j') = Nat.eqb i i' && Nat.eqb j j'.
+Proof. reflexivity. Qed.
+
+Lemma rtree_eqb_Node {X} (eqbX : X -> X -> bool) x c x' c' :
+  rtree_eqb eqbX (Node x c) (Node x' c') = eqbX x x' && list_eqb (rtree_eqb eqbX) c c'.
+Proof. reflexivity. Qed.
+
+Lemma rtree_eqb_Rec {X} (eqbX : X -> X -> bool) i a i' a' :
+  rtree_eqb eqbX (Rec i a) (Rec i' a') = Nat.eqb i i' && list_eqb (rtree_eqb eqbX) a a'.
+Proof. reflexivity. Qed.
+
+(** The automatically generated induction principle for [rtree] gives no
+  induction hypothesis for the [children] of a [Node]/[Rec] node, since these
+  are hidden behind a [list]. This is the usual strengthened principle. *)
+Lemma rtree_ind_all (X : Type) (P : rtree X -> Prop) :
+  (forall i j, P (Param i j)) ->
+  (forall x l, Forall P l -> P (Node x l)) ->
+  (forall i l, Forall P l -> P (Rec i l)) ->
+  forall t, P t.
+Proof.
+  intros Hparam Hnode Hrec.
+  fix auxt 1. move auxt at top.
+  intros [i j | x l | i l].
+  - apply Hparam.
+  - apply Hnode. revert l. fix auxl 1.
+    intros [| u l]; constructor; [apply auxt | apply auxl].
+  - apply Hrec. revert l. fix auxl 1.
+    intros [| u l]; constructor; [apply auxt | apply auxl].
+Qed.

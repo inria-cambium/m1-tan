@@ -50,12 +50,35 @@ Definition size_glb s1 s2 :=
 (* Set Default Goal Selector "all". *)
 Module Natset := MSetAVL.Make Nat.
 
-#[export, program]
-Instance reflect_natset : ReflectEq Natset.t :=
-  {| eqb := Natset.equal |}.
-Next Obligation.
-  apply todo.
-Defined.
+(** [Natset.equal] cannot be used as the [eqb] of a [ReflectEq] instance: it
+  compares the *elements* of two sets, while [ReflectEq] asks for a decider of
+  Leibniz equality, and [Natset.t] is a raw AVL tree (including its cached
+  height, which no invariant constrains) paired with a well-formedness proof.
+  Indeed [Natset.equal (Mkt (Node 1 Leaf 1 Leaf)) (Mkt (Node 9 Leaf 1 Leaf))]
+  is [true] while the two sets are distinct terms.
+
+  So we decide equality structurally instead. This needs irrelevance of the
+  well-formedness proofs, which MetaRocq's [MRMSets] provides for AVL sets
+  over a Leibniz-ordered element type -- at the price of functional
+  extensionality (see [MSetAVL.LtIrrel] there). *)
+Module NatIsLeibniz <: IsLeibniz Nat.
+  Lemma eq_leibniz x y : Nat.eq x y -> x = y.
+  Proof. exact (fun p => p). Qed.
+End NatIsLeibniz.
+
+Module NatIsLtIrrel <: IsLtIrrel Nat.
+  Lemma lt_irrel x y (p q : Nat.lt x y) : p = q.
+  Proof. apply Peano_dec.le_unique. Qed.
+End NatIsLtIrrel.
+
+Module NatsetDecide := MSetAVL.Decide Nat Natset.
+Module NatsetLtIrrel := MSetAVL.LtIrrel Nat Natset NatIsLtIrrel.
+Module NatsetLeibniz :=
+  MSetAVL.DecideWithLeibniz Nat Natset NatIsLeibniz NatIsLtIrrel
+                            NatsetDecide NatsetLtIrrel.
+
+#[export]
+Instance reflect_natset : ReflectEq Natset.t := EqDec_ReflectEq Natset.t.
 
 Definition print_natset l := "{"^print_list string_of_nat ", " (Natset.elements l)^"}".
 
