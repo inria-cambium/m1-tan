@@ -529,8 +529,6 @@ Definition check_inductive_codomain := has_inductive_codomain.
 
   This code is conceptually quite similar to the positivity checker.
 *)
-(* TODO: I don't know at this point how the recargs tree calculated in the following differs from the one we already have statically computed -- for most purposes it seems to be identical (?) 
-*)
 
 (** To construct the recargs tree, the code makes use of [ra_env : list (recarg * wf_paths)], a de Bruijn context containing the recursive tree and the inductive for elements of an (instantiated) inductive type, and [(Norec, mk_norec)] for elements of non-inductive type.  
 
@@ -600,8 +598,6 @@ Fixpoint ienv_decompose_prod Σ ienv n (c : term) {struct n} : exc (context * li
     | _ => raise (OtherErr "ra_env_decompose_prod" "not enough prods") 
     end
   end.
-
-(** TODO: missing [abstract_mind_lc]. *)
 
 Definition is_primitive_positive_container Σ c :=
   match Retroknowledge.retro_array Σ.(retroknowledge) with
@@ -789,7 +785,6 @@ with build_recargs_constructors Σ ρ ienv (trees : list wf_paths) (c : term) {s
 (** [get_recargs_approx env tree ind args] builds an approximation of the recargs
 tree for [ind], knowing [args] that are applied to it. 
 The argument [tree] is used to know when candidate nested types should be traversed, pruning the tree otherwise. *)
-(* TODO: figure out in which cases with nested inductives this isn't actually the identity *)
 Definition get_recargs_approx Σ ρ Γ (tree : wf_paths) (ind : inductive) (args : list term) : exc wf_paths := 
   (* starting with ra_env = [] seems safe because any unbound tRel will be assigned Norec *)
   build_recargs_nested Σ ρ (Γ,[]) tree ind args.
@@ -905,7 +900,6 @@ Fixpoint subterm_specif Σ ρ G (stack : list stack_element) t {struct t}: exc s
         (** push fixpoints to the guard env *)
         let G' := push_fix_guard_env G mfix in
         (** we let the current fixpoint be a strict subterm *)
-        (* TODO: is this sound? why is it needed? nested fixes? Same question raised in the OCaml impl *)
         let G' := update_guard_spec G' (num_fixes - mfix_ind) (Subterm Natset.empty Strict rectree) in
         let decreasing_arg := cur_fix.(rarg) in
         let body := cur_fix.(dbody) in 
@@ -938,8 +932,6 @@ Fixpoint subterm_specif Σ ρ G (stack : list stack_element) t {struct t}: exc s
       (* raise $ OtherErr "subterm_specif" "the guardedness checker does not handle evars" *)
   | tProj p t => 
       (** compute the spec for t *)
-      (** TODO: why do we do this with the stack (instead of the empty stack)?
-        shouldn't _the result_ of the projection be applied to the elements of the stack?? *)
       t_spec <- subterm_specif Σ ρ G stack t;;
       match t_spec with 
       | Subterm _ _ paths => 
@@ -1011,7 +1003,6 @@ Inductive check_subterm_result :=
 Definition check_is_subterm spec tree := 
   match spec with 
   | Subterm need_reduce Strict tree' => 
-      (* TODO: find an example where the inclusion checking is needed -- probably with nested inductives? *)
       if incl_wf_paths tree tree' then NeedReduceSubterm need_reduce
       else InvalidSubterm
   | Dead_code => 
@@ -1078,7 +1069,6 @@ Definition filter_stack_domain Σ ρ Γ nr (rtf : term) (stack : list stack_elem
                 | Subterm l s path =>
                     trace "a subterm, we need to intersect" ;;
                     (** intersect with an approximation of the unfolded tree for [ind] *)
-                    (* TODO : when does get_recargs_approx give something other than identity ? *)
                     recargs <- get_recargs_approx Σ ρ Γ path ind ty_args;;
                     trace $ "recargs: " ^ print_wf_paths Σ recargs ;;
                     trace $ "path: " ^ print_wf_paths Σ path  ;;
@@ -1183,7 +1173,7 @@ Definition pop_argument Σ ρ needreduce G elt stack (x : aname) (a b : term)
     ret (push_var G (x,a,spec), lift_stack 1 stack, b)
   end.
 
-(* TODO: typing judgement. probably useless, not sure *)
+(* typing judgement. probably useless, not sure *)
 (* Definition judgment_of_fixpoint (_, types, bodies) :=
   Array.map2 (fun typ body -> { uj_val = body ; uj_type = typ }) types bodies *)
 
@@ -1315,7 +1305,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
       trace $ "done filtering stack: " ^print_stack Σ stack' ;;
       trace $ "  stack("^(string_of_nat #|stack|)^"): "^print_stack Σ stack' ;;
       rs' <- fold_left_i (fun k rs' br' =>
-          (* TODO: quadratic *)
+          (* quadratic *)
           rs' <- rs' ;;
           spec <- except (IndexErr "check_rec_call_stack :: tCase" "not enough specs" k) $ nth_error case_spec k ;;
           trace $ "checking the "^(string_of_nat k)^"-th branch" ;;
@@ -1469,7 +1459,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
       '(needreduce', rs) <- check_rec_call G rs c ;;
       check_rec_call_state G needreduce' stack rs (fun tt =>
         (* if this fails, try to reduce the projection by looking for a constructor in c *)
-        trace "TODO: whd_all on projection" ;;
+        trace "whd_all on projection" ;;
         c <- whd_all Σ G.(loc_env) c;;
         let '(hd, args) := decompose_app c in 
         '(hd, args) <- match hd with 
@@ -1493,7 +1483,7 @@ Fixpoint check_rec_call_stack G (stack : list stack_element) (rs : list fix_chec
         end)
 
   | tVar _ => ret rs
-  (* FIXME: do vars work in MR? *)
+  (* do vars work in MR? *)
   (* | tVar id => 
       check_rec_call_state G NoNeedReduce stack rs (fun tt =>
         entry <- except (OtherErr "check_rec_call_stack" "unknown variable") $

@@ -54,7 +54,7 @@ Section checker.
     let Γ' := Γ ,, vass na ty_inst in 
 
     (* add to ra_env *)
-    (* TODO: originally Imbr *)
+    (* originally Imbr *)
     let ra_env' := map (fun t => (Mrec (RecArgInd ind), t)) (mk_rec_calls (X:=recarg) 1) ++ 
       (* lift the existing env *)
       map (fun '(r, t) => (r, rtree_lift 1 t)) ra_env in
@@ -195,7 +195,7 @@ Section checker.
       (* check positive occurrences recursively *)
       check_constructor Σ param_context ind ienv'' constr') abstracted_constrs;;
     (* make the tree for this nested inductive *)
-    (* TODO: originally Imbr *)
+    (* originally Imbr *)
     rec_trees <- except (OtherErr "check_positivity_nested" "out of fuel") $ mk_rec [mk_ind_paths (Mrec (RecArgInd nested_ind)) recargs_constrs_nested];;
     (* get the singleton *)
     match rec_trees with 
