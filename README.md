@@ -2,6 +2,8 @@
 
 This repository contains the guard checker of Rocq implemented in Rocq,
 using the MetaRocq project.
+It implements the guard checker at commit hash 
+[d6550d16f01d39dee97f7e645e415de51725fd2e](https://github.com/rocq-prover/rocq/blob/d6550d16f01d39dee97f7e645e415de51725fd2e/kernel/inductive.ml#L569).
 
 ## Installation
 ```sh
@@ -13,7 +15,7 @@ make -j
 
 ## Usage
 
-```coq
+```rocq
 From MetaRocq.Guarded Require Import plugin.
 From MetaRocq Require Import Utils.bytestring.
 
