@@ -9,7 +9,7 @@ It implements the guard checker at commit hash
 ```sh
 opam switch create . ocaml-variants.5.4.1+options --repos=default,rocq-released -y
 opam pin -n -y "https://github.com/MetaRocq/metarocq.git#v1.5.1-9.2"
-opam install rocq-metarocq-template rocq-metarocq-utils
+opam install -y rocq-metarocq-template rocq-metarocq-utils
 make -j
 ```
 
