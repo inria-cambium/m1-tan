@@ -10,6 +10,5 @@ theories/Inductives.v
 theories/guardchecker.v
 theories/positivitychecker.v
 theories/plugin.v
-theories/test.v
 theories/examples.v
 theories/TestSuiteFixpoint.v

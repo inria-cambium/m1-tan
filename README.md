@@ -5,11 +5,9 @@ using the MetaRocq project.
 
 ## Installation
 ```sh
-opam switch create metacoq-guard --packages="ocaml-variants.4.14.1+options,ocaml-option-flambda"
-eval $(opam env --switch=metacoq-guard)
-opam repo add coq-released https://coq.inria.fr/opam/released
-opam pin -n -y "https://github.com/MetaRocq/metacoq.git#v1.3.2-8.19"
-opam install coq-metacoq-template coq-metacoq-utils
+opam switch create . ocaml-variants.5.5.1+options --repos=default,rocq-released -y
+opam pin -n -y "https://github.com/MetaRocq/metarocq.git#v1.5.1-9.2"
+opam install rocq-metarocq-template rocq-metarocq-utils
 make -j
 ```
 
