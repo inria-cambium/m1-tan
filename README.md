@@ -30,8 +30,3 @@ MetaRocq Run (check_fix add).
 (* accepts a boolean flag on the expected guardedness. *)
 MetaRocq Run (check_fix_ci true add).
 ```
-
-## Credits
-
-This project is based on https://github.com/lgaeher/metacoq/blob/guarded/README_project.md.
-
